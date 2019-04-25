@@ -15,7 +15,7 @@
 <meta property="og:site_name" content="Kingtu&#39;s Blogs">
 <meta property="og:description" content="一、安装node.js和git到node.js和git的官网下载对应操作系统（本文以64位win7为例）的安装包，默认下一步安装即可。node.js下载链接git下载链接 安装好git之后，在命令行输入git version，若有版本号输出，说明安装成功。同时鼠标右键菜单里多了Git GUI Here和Git Bash Here两个选项，一个是图形界面的Git操作，一个是命令行，常用Git Bas">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-04-25T15:58:28.172Z">
+<meta property="og:updated_time" content="2019-04-25T17:09:54.715Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="hexo+git搭建github page">
 <meta name="twitter:description" content="一、安装node.js和git到node.js和git的官网下载对应操作系统（本文以64位win7为例）的安装包，默认下一步安装即可。node.js下载链接git下载链接 安装好git之后，在命令行输入git version，若有版本号输出，说明安装成功。同时鼠标右键菜单里多了Git GUI Here和Git Bash Here两个选项，一个是图形界面的Git操作，一个是命令行，常用Git Bas">
@@ -85,7 +85,7 @@
 				
 					<a class="github" target="_blank" href="https://github.com/King-tu" title="github"><i class="icon-github"></i></a>
 		        
-					<a class="rss" target="_blank" href="/atom.xml" title="rss"><i class="icon-rss"></i></a>
+					<a class="rss" target="_blank" href="/index.html" title="rss"><i class="icon-rss"></i></a>
 		        
 					<a class="mail" target="_blank" href="/kingtu163@163.com" title="mail"><i class="icon-mail"></i></a>
 		        
@@ -126,7 +126,7 @@
 					
 						<a class="github" target="_blank" href="https://github.com/King-tu" title="github"><i class="icon-github"></i></a>
 			        
-						<a class="rss" target="_blank" href="/atom.xml" title="rss"><i class="icon-rss"></i></a>
+						<a class="rss" target="_blank" href="/index.html" title="rss"><i class="icon-rss"></i></a>
 			        
 						<a class="mail" target="_blank" href="/kingtu163@163.com" title="mail"><i class="icon-mail"></i></a>
 			        
@@ -176,11 +176,13 @@
       
         <h3 id="一、安装node-js和git"><a href="#一、安装node-js和git" class="headerlink" title="一、安装node.js和git"></a>一、安装node.js和git</h3><p>到node.js和git的官网下载对应操作系统（本文以64位win7为例）的安装包，默认下一步安装即可。<br><a href="https://nodejs.org/en/download/" target="_blank" rel="noopener">node.js下载链接</a><br><a href="https://git-scm.com/download/win" target="_blank" rel="noopener">git下载链接</a></p>
 <p>安装好git之后，在命令行输入git version，若有版本号输出，说明安装成功。<br>同时鼠标右键菜单里多了Git GUI Here和Git Bash Here两个选项，一个是图形界面的Git操作，一个是命令行，常用Git Bash Here。</p>
-<h3 id="二、安装Hexo"><a href="#二、安装Hexo" class="headerlink" title="二、安装Hexo"></a>二、安装Hexo</h3><p>桌面右键鼠标，点击Git Bash Here，输入以下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">npm install hexo-cli -g</span><br><span class="line"></span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure></p>
+<h3 id="二、安装Hexo"><a href="#二、安装Hexo" class="headerlink" title="二、安装Hexo"></a>二、安装Hexo</h3><p>桌面右键鼠标，点击Git Bash Here，输入以下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure></p>
 <p>第一句是安装hexo，第二句是安装hexo部署到github page的deployer，两个都需要安装。</p>
 <h3 id="三、初始化Hexo"><a href="#三、初始化Hexo" class="headerlink" title="三、初始化Hexo"></a>三、初始化Hexo</h3><p>安装好Hexo之后，建立Hexo文件夹（如F:\Blog\Hexo），直接进入F:\Blog\Hexo文件夹下右键鼠标，<br>点击Git Bash Here，在Git Bash命令框，执行以下操作：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init</span><br></pre></td></tr></table></figure></p>
 <p>初始化完成后，执行下面语句：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hexo generate</span><br><span class="line">hexo server</span><br></pre></td></tr></table></figure></p>
 <p>执行完即可用浏览器访问localhost:4000预览效果</p>
+<p>问题及解决：<br>1、将本地的博客部署到Github Page时，报错 ERROR Deployer not found: git，是因为deployer没有安装成功，需要执行如下命令再安装一次：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure></p>
+<p>2、Github Page显示中文乱码：<br>将博客文件另存为UTF-8编码格式，然后重新生成、部署即可。</p>
 
       
 
