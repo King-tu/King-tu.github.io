@@ -19,7 +19,7 @@
 <meta property="og:image" content="https://github.com/King-tu/MarkdownPhotos/raw/master/src/Settings.png">
 <meta property="og:image" content="https://github.com/King-tu/MarkdownPhotos/raw/master/src/SSH%20keys.png">
 <meta property="og:image" content="https://github.com/King-tu/MarkdownPhotos/raw/master/src/hexo%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6.png">
-<meta property="og:updated_time" content="2019-04-26T07:54:31.033Z">
+<meta property="og:updated_time" content="2019-04-26T07:56:42.305Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hexo+Git搭建Github Page">
 <meta name="twitter:description" content="本地环境配置一、安装node.js和Git到node.js和git的官网下载对应操作系统（本文以64位win7为例）的安装包，默认下一步安装即可。node.js下载链接git下载链接 安装好git之后，在命令行输入git version，若有版本号输出，说明安装成功。同时鼠标右键菜单里多了Git GUI Here和Git Bash Here两个选项，一个是图形界面的Git操作，一个是命令行，常用G">
@@ -177,10 +177,10 @@
 <p>安装好git之后，在命令行输入git version，若有版本号输出，说明安装成功。<br>同时鼠标右键菜单里多了Git GUI Here和Git Bash Here两个选项，一个是图形界面的Git操作，一个是命令行，常用Git Bash Here。</p>
 <h3 id="二、安装Hexo"><a href="#二、安装Hexo" class="headerlink" title="二、安装Hexo"></a>二、安装Hexo</h3><p>桌面右键鼠标，点击Git Bash Here，输入以下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ npm install hexo-cli -g</span><br><span class="line">$ npm install hexo-deployer-git --save</span><br></pre></td></tr></table></figure></p>
 <p>第一句是安装hexo，第二句是安装hexo部署到github page的deployer，两个都需要安装。</p>
+<a id="more"></a>
 <h3 id="三、初始化Hexo"><a href="#三、初始化Hexo" class="headerlink" title="三、初始化Hexo"></a>三、初始化Hexo</h3><p>安装好Hexo之后，建立Hexo文件夹（如F:\Blog\Hexo），直接进入F:\Blog\Hexo文件夹下右键鼠标，<br>点击Git Bash Here，在Git Bash命令框，执行以下操作：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo init</span><br></pre></td></tr></table></figure></p>
 <p>初始化完成后，执行下面语句：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br><span class="line">$ hexo server</span><br></pre></td></tr></table></figure></p>
 <p>执行完即可用浏览器访问localhost:4000预览效果。</p>
-<a id="more"></a>
 <h2 id="Git链接Github"><a href="#Git链接Github" class="headerlink" title="Git链接Github"></a>Git链接Github</h2><h3 id="一、创建代码仓库：username-github-io"><a href="#一、创建代码仓库：username-github-io" class="headerlink" title="一、创建代码仓库：username.github.io"></a>一、创建代码仓库：username.github.io</h3><p>登录github，点击New repository。<br><img src="https://github.com/King-tu/MarkdownPhotos/raw/master/src/Create%20repository.png" alt="新建代码仓库"></p>
 <h3 id="二、创建SSH密钥"><a href="#二、创建SSH密钥" class="headerlink" title="二、创建SSH密钥"></a>二、创建SSH密钥</h3><p>默认情况下，用户的 SSH 密钥存储在其 ~/.ssh 目录下。进入该目录并列出其中内容，你便可以快速确认自己是否已拥有密钥：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> ~/.ssh</span><br><span class="line">$ ls</span><br></pre></td></tr></table></figure></p>
 <p>如果不存在 .ssh 目录，你可以通过运行以下命令创建密钥：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-keygen</span><br></pre></td></tr></table></figure></p>
