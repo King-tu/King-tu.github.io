@@ -20,7 +20,7 @@
 <meta property="og:image" content="https://github.com/King-tu/MarkdownPhotos/raw/master/src/Settings.png">
 <meta property="og:image" content="https://github.com/King-tu/MarkdownPhotos/raw/master/src/SSH%20keys.png">
 <meta property="og:image" content="https://github.com/King-tu/MarkdownPhotos/raw/master/src/hexo%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6.png">
-<meta property="og:updated_time" content="2019-04-26T14:32:28.458Z">
+<meta property="og:updated_time" content="2019-04-27T12:19:23.206Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Hexo+Git搭建Github Page">
 <meta name="twitter:description" content="本地环境配置一、安装node.js和Git到node.js和git的官网下载对应操作系统（本文以64位win7为例）的安装包，默认下一步安装即可。node.js下载链接git下载链接 安装好git之后，在命令行输入git version，若有版本号输出，说明安装成功。同时鼠标右键菜单里多了Git GUI Here和Git Bash Here两个选项，一个是图形界面的Git操作，一个是命令行，常用G">
@@ -187,7 +187,7 @@
 <p>如果不存在 .ssh 目录，你可以通过运行以下命令创建密钥：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh-keygen</span><br></pre></td></tr></table></figure></p>
 <p>一开始会提示密钥默认存放的路径和提示输入密码，可根据自己的需要更改，若不需要设置密钥的密码，直接按回车即可。</p>
 <h3 id="三、在GitHub账户中添加公钥"><a href="#三、在GitHub账户中添加公钥" class="headerlink" title="三、在GitHub账户中添加公钥"></a>三、在GitHub账户中添加公钥</h3><p>运行如下命令，将公钥的内容复制到系统粘贴板(clipboard)中。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ clip &lt; ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure></p>
-<p>接着，登陆GitHub,进入：Settings，找到：SSH and GPG keys，<br><img src="https://github.com/King-tu/MarkdownPhotos/raw/master/src/Settings.png" alt><img src="https://github.com/King-tu/MarkdownPhotos/raw/master/src/SSH%20keys.png" alt></p>
+<p>接着，登陆GitHub，进入：Settings，找到：SSH and GPG keys，<br><img src="https://github.com/King-tu/MarkdownPhotos/raw/master/src/Settings.png" alt><img src="https://github.com/King-tu/MarkdownPhotos/raw/master/src/SSH%20keys.png" alt></p>
 <p>然后点击：New SSH key，Title随便填，将密钥粘贴到Key下面的方框，点击Add SSH key即可。</p>
 <h3 id="四、测试Git是否能够通过SSH链接Github"><a href="#四、测试Git是否能够通过SSH链接Github" class="headerlink" title="四、测试Git是否能够通过SSH链接Github"></a>四、测试Git是否能够通过SSH链接Github</h3><p>输入以下命令：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh -T git@github.com</span><br></pre></td></tr></table></figure></p>
 <p>如果提示：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">The authenticity of host <span class="string">'github.com (207.97.227.239)'</span> can<span class="string">'t be established.</span></span><br><span class="line"><span class="string">RSA key fingerprint is 16:27:ac:a5:76:28:2d:36:63:1b:56:4d:eb:df:a6:48.</span></span><br><span class="line"><span class="string">Are you sure you want to continue connecting (yes/no)?</span></span><br></pre></td></tr></table></figure></p>
@@ -327,16 +327,6 @@
 </article>
 
   
-<nav id="article-nav">
-  
-  
-    <a href="/2019/04/25/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Hello World</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
