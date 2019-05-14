@@ -6,15 +6,24 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://king-tu.github.io">
-  <title>Archives: 2019 | Kingtu&#39;s Blogs</title>
+  <title>Mysql主从配置（主Linux--从Windows） | Kingtu&#39;s Blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Kingtu&#39;s Blogs">
-<meta property="og:url" content="https://king-tu.github.io/archives/2019/index.html">
+  <meta name="description" content="MySQL主从复制的过程（原理）1、Slave上面的IO线程连接上Master，并请求从指定日志文件的指定位置（或者从最开始的日志）之后的日志内容； 2、Master接收到来自Slave的IO线程的请求后，通过负责复制的IO线程根据请求信息读取指定日志指定位置之后的日志信息，返回给Slave端的IO线程。返回信息中除了日志所包含的信息之外，还包括本次返回的信息在Master端的Binary Lo">
+<meta name="keywords" content="主从配置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mysql主从配置（主Linux--从Windows）">
+<meta property="og:url" content="https://king-tu.github.io/2019/05/14/Mysql_Mater_Slave/index.html">
 <meta property="og:site_name" content="Kingtu&#39;s Blogs">
+<meta property="og:description" content="MySQL主从复制的过程（原理）1、Slave上面的IO线程连接上Master，并请求从指定日志文件的指定位置（或者从最开始的日志）之后的日志内容； 2、Master接收到来自Slave的IO线程的请求后，通过负责复制的IO线程根据请求信息读取指定日志指定位置之后的日志信息，返回给Slave端的IO线程。返回信息中除了日志所包含的信息之外，还包括本次返回的信息在Master端的Binary Lo">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="https://github.com/King-tu/MarkdownPhotos/raw/master/src/Mysql/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B61.png">
+<meta property="og:image" content="https://github.com/King-tu/MarkdownPhotos/raw/master/src/Mysql/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B62.png">
+<meta property="og:image" content="https://github.com/King-tu/MarkdownPhotos/raw/master/src/Mysql/slave%E7%8A%B6%E6%80%81.png">
+<meta property="og:updated_time" content="2019-05-14T11:47:59.623Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Kingtu&#39;s Blogs">
+<meta name="twitter:title" content="Mysql主从配置（主Linux--从Windows）">
+<meta name="twitter:description" content="MySQL主从复制的过程（原理）1、Slave上面的IO线程连接上Master，并请求从指定日志文件的指定位置（或者从最开始的日志）之后的日志内容； 2、Master接收到来自Slave的IO线程的请求后，通过负责复制的IO线程根据请求信息读取指定日志指定位置之后的日志信息，返回给Slave端的IO线程。返回信息中除了日志所包含的信息之外，还包括本次返回的信息在Master端的Binary Lo">
+<meta name="twitter:image" content="https://github.com/King-tu/MarkdownPhotos/raw/master/src/Mysql/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B61.png">
   
     <link rel="alternative" href="/atom.xml" title="Kingtu&#39;s Blogs" type="application/atom+xml">
   
@@ -144,36 +153,101 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Mysql_Mater_Slave" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/05/14/Mysql_Mater_Slave/" class="archive-article-date">
-  	<time datetime="2019-05-13T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-14</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/05/14/Mysql_Mater_Slave/">Mysql主从配置（主Linux--从Windows）</a>
+    <h1 class="article-title" itemprop="name">
+      Mysql主从配置（主Linux--从Windows）
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2019/05/14/Mysql_Mater_Slave/" class="archive-article-date">
+  	<time datetime="2019-05-13T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-14</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><br></p>
+<h2 id="MySQL主从复制的过程（原理）"><a href="#MySQL主从复制的过程（原理）" class="headerlink" title="MySQL主从复制的过程（原理）"></a>MySQL主从复制的过程（原理）</h2><p>1、Slave上面的IO线程连接上Master，并请求从指定日志文件的指定位置（或者从<br>最开始的日志）之后的日志内容；</p>
+<p>2、Master接收到来自Slave的IO线程的请求后，通过负责复制的IO线程根据请<br>求信息读取指定日志指定位置之后的日志信息，返回给Slave端的IO线程。返回信<br>息中除了日志所包含的信息之外，还包括本次返回的信息在Master端的Binary Log<br>文件的名称以及在Binary Log中的位置；</p>
+<p>3、Slave的IO线程接收到信息后，将接收到的日志内容依次写入到Slave端的<br>Relay Log文件(mysql-relay-bin.xxxxxx)的最末端，并将读取到的Master端的binlog的文件名和位置记录到master-info文件中，以便在下一次读取的时候能够清楚的<br>告诉Master“我需要从某个bin-log的哪个位置开始往后的日志内容，请发给我”</p>
+<p>4、Slave的SQL线程检测到Relay Log中新增加了内容后，会马上解析该Log文<br>件中的内容成为在Master端真实执行时候的那些可执行的Query语句，并在自身执<br>行这些Query。这样，实际上就是在Master端和Slave端执行了同样的Query，所<br>以两端的数据是完全一样的。<br><img src="https://github.com/King-tu/MarkdownPhotos/raw/master/src/Mysql/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B61.png" alt><br><img src="https://github.com/King-tu/MarkdownPhotos/raw/master/src/Mysql/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B62.png" alt></p>
+<a id="more"></a>
+<p><br></p>
+<h2 id="MySQL主从复制相关配置"><a href="#MySQL主从复制相关配置" class="headerlink" title="MySQL主从复制相关配置"></a>MySQL主从复制相关配置</h2><h3 id="配置环境介绍（一主二从）"><a href="#配置环境介绍（一主二从）" class="headerlink" title="配置环境介绍（一主二从）"></a>配置环境介绍（一主二从）</h3><p>　　主数据库所在的操作系统：Linux</p>
+<p>　　主数据库的版本：8.0.16</p>
+<p>　　主数据库的ip地址：192.168.1.120</p>
+<p>　　从数据库所在的操作系统：Windows Server 2008, win7</p>
+<p>　　从数据库的版本：8.0.16</p>
+<p>　　从数据库的ip地址：192.168.1.110， 192.168.1.100</p>
+<p>Linux和Windows安装Mysql请参考以下链接：<br>　　<a href="https://blog.csdn.net/qq_36582604/article/details/80526287" target="_blank" rel="noopener">CentOS7安装MySQL（完整版）</a><br>　　<a href="https://www.jianshu.com/p/f1e08821927a" target="_blank" rel="noopener">Windows下安装mysql-8.0.12及修改初始密码</a></p>
+<h3 id="主从配置步骤"><a href="#主从配置步骤" class="headerlink" title="主从配置步骤"></a>主从配置步骤</h3><p>1、主节点(Master)配置<br>修改 Master 的配置文件/etc/my.cnf<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vim /etc/my.cnf</span><br></pre></td></tr></table></figure></p>
+<p>在my.cnf文件的 [mysqld] 字段下加入如下配置内容：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">server-id=120              <span class="comment">#设置服务器id</span></span><br><span class="line"><span class="built_in">log</span>-bin=centos7            <span class="comment">#指定二进制日志文件</span></span><br><span class="line">binlog-do-db=<span class="built_in">test</span>          <span class="comment">#要同步的数据库名</span></span><br><span class="line">binlog-ignore-db=mysql     <span class="comment">#要忽略的数据库(不同步)</span></span><br></pre></td></tr></table></figure></p>
+<p>重启数据库。</p>
+<p>2、从节点(Slave)配置<br>在Mysql安装目录下新建my.ini文件，加入以下内容<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[mysqld]</span><br><span class="line">server-id = 100</span><br><span class="line"><span class="built_in">log</span>-bin = win7-bin</span><br></pre></td></tr></table></figure></p>
+<p>重启数据库。</p>
+<p>3、从节点创建同步帐号并授权<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; CREATE USER <span class="string">'repl'</span>@<span class="string">'%'</span> IDENTIFIED BY <span class="string">'password'</span>;</span><br><span class="line">mysql&gt; GRANT REPLICATION SLAVE ON *.* TO <span class="string">'repl'</span>@<span class="string">'%'</span>;</span><br><span class="line">mysql&gt;flush privileges;</span><br></pre></td></tr></table></figure></p>
+<p>4、主节点锁定后查看状态<br>主节点上锁<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; flash tables with <span class="built_in">read</span> lock;</span><br></pre></td></tr></table></figure></p>
+<p>主节点查看状态<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show master status;</span><br><span class="line">+-----------------+----------+--------------+------------------+-------------------+</span><br><span class="line">| File            | Position | Binlog_Do_DB | Binlog_Ignore_DB | Executed_Gtid_Set |</span><br><span class="line">+-----------------+----------+--------------+------------------+-------------------+</span><br><span class="line">| centos7.000002  |     155  |     <span class="built_in">test</span>     |       mysql      |                   |</span><br><span class="line">+-----------------+----------+--------------+------------------+-------------------+</span><br><span class="line">1 row <span class="keyword">in</span> <span class="built_in">set</span> (0.07 sec)</span><br></pre></td></tr></table></figure></p>
+<p>5、从节点配置并启动同步、查看状态<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; change master to</span><br><span class="line">-&gt; master_host=<span class="string">'192.168.1.120'</span>,</span><br><span class="line">-&gt; master_user=<span class="string">'repl'</span>,</span><br><span class="line">-&gt; master_password=<span class="string">'password'</span>,</span><br><span class="line">-&gt; master_log_file=<span class="string">'centos7.000002'</span>,</span><br><span class="line">-&gt; master_log_pos=155;</span><br></pre></td></tr></table></figure></p>
+<p>这里的日志文件(log_file)和当前位置(log_pos)是根据上一步查到的主节点状态填写的。</p>
+<p>启动slave<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; start slave;</span><br></pre></td></tr></table></figure></p>
+<p>查看从节点状态<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show slave status \G</span><br></pre></td></tr></table></figure></p>
+<p>如果slave_io_running和slave_sql_running都为yes，那么表明可以成功同步了<br><img src="https://github.com/King-tu/MarkdownPhotos/raw/master/src/Mysql/slave%E7%8A%B6%E6%80%81.png" alt></p>
+<p>6、主节点解锁并验证从节点是否正常同步<br>主节点解锁<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; unlock tables;</span><br></pre></td></tr></table></figure></p>
+<p>主节点新建数据库<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; create database <span class="built_in">test</span>;</span><br></pre></td></tr></table></figure></p>
+<p>从节点查看是否同步<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show databases;</span><br></pre></td></tr></table></figure></p>
+<h2 id="问题及解决："><a href="#问题及解决：" class="headerlink" title="问题及解决："></a>问题及解决：</h2><p>1、从节点配置并启动同步后、查看状态报错<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; show slave status \G</span><br><span class="line">......</span><br><span class="line">Slave_IO_Running: Connecting</span><br><span class="line">Slave_SQL_Running: Yes</span><br><span class="line">......</span><br><span class="line">Last_IO_Errno: 2061</span><br><span class="line">Last_IO_Error: error connecting to master <span class="string">'repl@192.168.1.120:3306'</span> - retry-time: 60  retries: 1</span><br><span class="line">......</span><br></pre></td></tr></table></figure></p>
+<p>根据错误代码Last_IO_Errno: 2061查找得知，MySQL8.0默认指定使用需要SSL的身份验证插件caching_sha2_password，而我们在创建同步复制账号时候没有指定REQUIRE SSL。为了降低这件事情的复杂性，我们选择了社区的解决方法，选择绕过SSL插件的验证，改为mysql_native_password验证来做同步复制。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alter user <span class="string">'repl'</span>@<span class="string">'%'</span> identified with mysql_native_password by <span class="string">'password'</span>;</span><br></pre></td></tr></table></figure></p>
+<p>此时再查看该用户的密码加密方式，plugin为mysql_native_password<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select user,host,plugin from user \G</span><br><span class="line">*************************** 1. row ***************************</span><br><span class="line">             user: repl</span><br><span class="line">             host: 192.168.1.120</span><br><span class="line">           plugin: mysql_native_password</span><br></pre></td></tr></table></figure></p>
+<p>然后，从节点中重新启动slave即可。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; stop slave;</span><br><span class="line">mysql&gt; start slave;</span><br></pre></td></tr></table></figure></p>
+<hr>
+<p>参考链接:<br><a href="https://www.cnblogs.com/jyzhao/p/5552077.html" target="_blank" rel="noopener">https://www.cnblogs.com/jyzhao/p/5552077.html</a><br><a href="https://blog.csdn.net/M471586651/article/details/72911859" target="_blank" rel="noopener">https://blog.csdn.net/M471586651/article/details/72911859</a><br><a href="https://blog.csdn.net/wawa8899/article/details/86689618" target="_blank" rel="noopener">https://blog.csdn.net/wawa8899/article/details/86689618</a><br><a href="https://blog.csdn.net/wangxiaotongfan/article/details/81870258" target="_blank" rel="noopener">https://blog.csdn.net/wangxiaotongfan/article/details/81870258</a></p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>你的鼓励是我进步的动力<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/assets/img/alipay.png">
+                      <span class="reward-type">支付宝</span>
+                    </div>
+                    
+                    
+                    <div class="reward-box-item">
+                      <img class="reward-img" src="/assets/img/weixin.png">
+                      <span class="reward-type">微信</span>
+                    </div>
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -185,7 +259,7 @@
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -198,70 +272,117 @@
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="https://img.fanhaobai.com/qrcode.php?url=https://king-tu.github.io/2019/05/14/Mysql_Mater_Slave/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/04/26/hexo-git-github_page/" class="archive-article-date">
-  	<time datetime="2019-04-25T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-26</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2019/04/26/hexo-git-github_page/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Hexo+Git搭建Github Page</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/04/26/hexo-git-github_page/">Hexo+Git搭建Github Page</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Hexo</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Github</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Blog//" class="article-tag-list-link color5">Blog</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL主从复制的过程（原理）"><span class="toc-number">1.</span> <span class="toc-text">MySQL主从复制的过程（原理）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MySQL主从复制相关配置"><span class="toc-number">2.</span> <span class="toc-text">MySQL主从复制相关配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#配置环境介绍（一主二从）"><span class="toc-number">2.1.</span> <span class="toc-text">配置环境介绍（一主二从）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#主从配置步骤"><span class="toc-number">2.2.</span> <span class="toc-text">主从配置步骤</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#问题及解决："><span class="toc-number">3.</span> <span class="toc-text">问题及解决：</span></a></li></ol>
+                    </div>
+                </span>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
+        
+    </div>
+</aside>
+
+
+
   
   
-    </div></section>
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -284,8 +405,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,

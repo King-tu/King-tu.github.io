@@ -146,6 +146,97 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Mysql_Mater_Slave" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/05/14/Mysql_Mater_Slave/">Mysql主从配置（主Linux--从Windows）</a>
+    </h1>
+  
+
+        
+        <a href="/2019/05/14/Mysql_Mater_Slave/" class="archive-article-date">
+  	<time datetime="2019-05-13T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-14</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><br></p>
+<h2 id="MySQL主从复制的过程（原理）"><a href="#MySQL主从复制的过程（原理）" class="headerlink" title="MySQL主从复制的过程（原理）"></a>MySQL主从复制的过程（原理）</h2><p>1、Slave上面的IO线程连接上Master，并请求从指定日志文件的指定位置（或者从<br>最开始的日志）之后的日志内容；</p>
+<p>2、Master接收到来自Slave的IO线程的请求后，通过负责复制的IO线程根据请<br>求信息读取指定日志指定位置之后的日志信息，返回给Slave端的IO线程。返回信<br>息中除了日志所包含的信息之外，还包括本次返回的信息在Master端的Binary Log<br>文件的名称以及在Binary Log中的位置；</p>
+<p>3、Slave的IO线程接收到信息后，将接收到的日志内容依次写入到Slave端的<br>Relay Log文件(mysql-relay-bin.xxxxxx)的最末端，并将读取到的Master端的binlog的文件名和位置记录到master-info文件中，以便在下一次读取的时候能够清楚的<br>告诉Master“我需要从某个bin-log的哪个位置开始往后的日志内容，请发给我”</p>
+<p>4、Slave的SQL线程检测到Relay Log中新增加了内容后，会马上解析该Log文<br>件中的内容成为在Master端真实执行时候的那些可执行的Query语句，并在自身执<br>行这些Query。这样，实际上就是在Master端和Slave端执行了同样的Query，所<br>以两端的数据是完全一样的。<br><img src="https://github.com/King-tu/MarkdownPhotos/raw/master/src/Mysql/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B61.png" alt><br><img src="https://github.com/King-tu/MarkdownPhotos/raw/master/src/Mysql/Mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B62.png" alt></p>
+        
+          <a class="article-more-a" href="/2019/05/14/Mysql_Mater_Slave/#more">more >></a>
+        
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">主从配置</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Mysql//" class="article-tag-list-link color1">Mysql</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/05/14/Mysql_Mater_Slave/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-hexo-git-github_page" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -338,6 +429,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Github</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">主从配置</a>
               </li>
             
             <div class="clearfix"></div>
