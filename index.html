@@ -146,6 +146,94 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-sort_func" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/05/28/sort_func/">GO语言实现冒泡排序和选择排序</a>
+    </h1>
+  
+
+        
+        <a href="/2019/05/28/sort_func/" class="archive-article-date">
+  	<time datetime="2019-05-27T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-28</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">package sortfunc</span><br><span class="line"></span><br><span class="line">//对切片元素实现，冒泡排序</span><br><span class="line">func BubbleSort(slice []int) &#123;</span><br><span class="line">	//外循环控制比较的轮次，剩最后一个数时无需再比较，所以共比较len(slice)-1轮</span><br><span class="line">	<span class="keyword">for</span> i := 0; i &lt; len(slice)-1; i++ &#123;</span><br><span class="line">		//内循环控制每轮比较的次数，且每轮比较的次数会随着轮次的增加而减少</span><br><span class="line">		<span class="keyword">for</span> j := 0; j &lt; len(slice)-1-i; j++ &#123;</span><br><span class="line">			<span class="keyword">if</span> slice[j] &gt; slice[j+1] &#123; //升序</span><br><span class="line">				slice[j], slice[j+1] = slice[j+1], slice[j]</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//选择排序：每轮比较之后，将最值的下标记下来，和每轮首位(或末位)下标的值交换</span><br><span class="line">func SelectSort(slice []int) &#123;</span><br><span class="line">	//外循环控制比较的轮次，剩最后一个数时无需再比较，所以共比较len(slice)-1轮</span><br><span class="line">	<span class="keyword">for</span> i := 0; i &lt; len(slice)-1; i++ &#123;</span><br><span class="line">		index := i</span><br><span class="line">		//内循环控制每轮比较的次数</span><br><span class="line">		<span class="keyword">for</span> j := i + 1; j &lt; len(slice); j++ &#123;</span><br><span class="line">			//获取最小值的下标</span><br><span class="line">			<span class="keyword">if</span> slice[index] &gt; slice[j] &#123;</span><br><span class="line">				index = j</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		//每轮比较结束，将比较位和最值位置的值交换</span><br><span class="line">		<span class="keyword">if</span> index != i &#123;</span><br><span class="line">			slice[index], slice[i] = slice[i], slice[index]</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">冒泡排序</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">选择排序</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Golang//" class="article-tag-list-link color2">Golang</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2019/05/28/sort_func/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Mysql_Mater_Slave" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -434,6 +522,14 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color2">Github</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">冒泡排序</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">选择排序</a>
               </li>
             
             <div class="clearfix"></div>

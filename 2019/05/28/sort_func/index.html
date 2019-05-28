@@ -6,15 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://king-tu.github.io">
-  <title>Archives: 2019 | Kingtu&#39;s Blogs</title>
+  <title>GO语言实现冒泡排序和选择排序 | Kingtu&#39;s Blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Kingtu&#39;s Blogs">
-<meta property="og:url" content="https://king-tu.github.io/archives/2019/index.html">
+  <meta name="description" content="123456789101112131415161718192021222324252627282930313233package sortfunc//对切片元素实现，冒泡排序func BubbleSort(slice []int) &amp;#123;	//外循环控制比较的轮次，剩最后一个数时无需再比较，所以共比较len(slice)-1轮	for i := 0; i &amp;lt; len(slice)-1;">
+<meta name="keywords" content="冒泡排序,选择排序">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GO语言实现冒泡排序和选择排序">
+<meta property="og:url" content="https://king-tu.github.io/2019/05/28/sort_func/index.html">
 <meta property="og:site_name" content="Kingtu&#39;s Blogs">
+<meta property="og:description" content="123456789101112131415161718192021222324252627282930313233package sortfunc//对切片元素实现，冒泡排序func BubbleSort(slice []int) &amp;#123;	//外循环控制比较的轮次，剩最后一个数时无需再比较，所以共比较len(slice)-1轮	for i := 0; i &amp;lt; len(slice)-1;">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-05-28T00:59:35.362Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Kingtu&#39;s Blogs">
+<meta name="twitter:title" content="GO语言实现冒泡排序和选择排序">
+<meta name="twitter:description" content="123456789101112131415161718192021222324252627282930313233package sortfunc//对切片元素实现，冒泡排序func BubbleSort(slice []int) &amp;#123;	//外循环控制比较的轮次，剩最后一个数时无需再比较，所以共比较len(slice)-1轮	for i := 0; i &amp;lt; len(slice)-1;">
   
     <link rel="alternative" href="/atom.xml" title="Kingtu&#39;s Blogs" type="application/atom+xml">
   
@@ -144,36 +149,34 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-sort_func" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/05/28/sort_func/" class="archive-article-date">
-  	<time datetime="2019-05-27T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-28</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/05/28/sort_func/">GO语言实现冒泡排序和选择排序</a>
+    <h1 class="article-title" itemprop="name">
+      GO语言实现冒泡排序和选择排序
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2019/05/28/sort_func/" class="archive-article-date">
+  	<time datetime="2019-05-27T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-28</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">package sortfunc</span><br><span class="line"></span><br><span class="line">//对切片元素实现，冒泡排序</span><br><span class="line">func BubbleSort(slice []int) &#123;</span><br><span class="line">	//外循环控制比较的轮次，剩最后一个数时无需再比较，所以共比较len(slice)-1轮</span><br><span class="line">	<span class="keyword">for</span> i := 0; i &lt; len(slice)-1; i++ &#123;</span><br><span class="line">		//内循环控制每轮比较的次数，且每轮比较的次数会随着轮次的增加而减少</span><br><span class="line">		<span class="keyword">for</span> j := 0; j &lt; len(slice)-1-i; j++ &#123;</span><br><span class="line">			<span class="keyword">if</span> slice[j] &gt; slice[j+1] &#123; //升序</span><br><span class="line">				slice[j], slice[j+1] = slice[j+1], slice[j]</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//选择排序：每轮比较之后，将最值的下标记下来，和每轮首位(或末位)下标的值交换</span><br><span class="line">func SelectSort(slice []int) &#123;</span><br><span class="line">	//外循环控制比较的轮次，剩最后一个数时无需再比较，所以共比较len(slice)-1轮</span><br><span class="line">	<span class="keyword">for</span> i := 0; i &lt; len(slice)-1; i++ &#123;</span><br><span class="line">		index := i</span><br><span class="line">		//内循环控制每轮比较的次数</span><br><span class="line">		<span class="keyword">for</span> j := i + 1; j &lt; len(slice); j++ &#123;</span><br><span class="line">			//获取最小值的下标</span><br><span class="line">			<span class="keyword">if</span> slice[index] &gt; slice[j] &#123;</span><br><span class="line">				index = j</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		//每轮比较结束，将比较位和最值位置的值交换</span><br><span class="line">		<span class="keyword">if</span> index != i &#123;</span><br><span class="line">			slice[index], slice[i] = slice[i], slice[index]</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -189,7 +192,7 @@
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -202,119 +205,117 @@
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="https://img.fanhaobai.com/qrcode.php?url=https://king-tu.github.io/2019/05/28/sort_func/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/05/14/Mysql_Mater_Slave/" class="archive-article-date">
-  	<time datetime="2019-05-13T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-14</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2019/05/14/Mysql_Mater_Slave/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Mysql主从配置（主Linux--从Windows）</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/05/14/Mysql_Mater_Slave/">Mysql主从配置（主Linux--从Windows）</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">主从配置</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Mysql//" class="article-tag-list-link color1">Mysql</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
+        
+        
+        <div class="toc-container tooltip-left">
+            <i class="icon-font icon-category"></i>
+            <div class="tooltip tooltip-east">
+                <span class="tooltip-item">
+                </span>
+                <span class="tooltip-content">
+                    <div class="toc-article">
+                    目录，不存在的…
+                    </div>
+                </span>
+            </div>
         </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/04/26/hexo-git-github_page/" class="archive-article-date">
-  	<time datetime="2019-04-25T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-26</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/04/26/hexo-git-github_page/">Hexo+Git搭建Github Page</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Hexo</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Github</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Blog//" class="article-tag-list-link color5">Blog</a>
-        		</li>
-      		
-		</ul>
-	</div>
+        
+    </div>
+</aside>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
+
   
   
-    </div></section>
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -337,8 +338,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
