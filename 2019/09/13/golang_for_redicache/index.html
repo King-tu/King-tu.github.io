@@ -6,15 +6,19 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://king-tu.github.io">
-  <title>Archives | Kingtu&#39;s Blogs</title>
+  <title>Kingtu&#39;s Blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
+  <meta name="description" content="需求用 Golang实现一个线程安全的类 redis的缓存，包名:redicache 功能: 1、键值对的存储:实现set，get，Del方法，键为字符串，值为字符串。 2、集合（实现添加（Add）、删除（Remove）、检测（Has）以及两个集合之间的并集（Union）交集（ Intersection）运算），只支持字符串集合。 3、定时保存磁盘文件，缓存关闭时时自动存盘，初始化时可将指定文件加">
+<meta property="og:type" content="article">
 <meta property="og:title" content="Kingtu&#39;s Blogs">
-<meta property="og:url" content="https://king-tu.github.io/archives/index.html">
+<meta property="og:url" content="https://king-tu.github.io/2019/09/13/golang_for_redicache/index.html">
 <meta property="og:site_name" content="Kingtu&#39;s Blogs">
+<meta property="og:description" content="需求用 Golang实现一个线程安全的类 redis的缓存，包名:redicache 功能: 1、键值对的存储:实现set，get，Del方法，键为字符串，值为字符串。 2、集合（实现添加（Add）、删除（Remove）、检测（Has）以及两个集合之间的并集（Union）交集（ Intersection）运算），只支持字符串集合。 3、定时保存磁盘文件，缓存关闭时时自动存盘，初始化时可将指定文件加">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-09-13T12:22:33.431Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kingtu&#39;s Blogs">
+<meta name="twitter:description" content="需求用 Golang实现一个线程安全的类 redis的缓存，包名:redicache 功能: 1、键值对的存储:实现set，get，Del方法，键为字符串，值为字符串。 2、集合（实现添加（Add）、删除（Remove）、检测（Has）以及两个集合之间的并集（Union）交集（ Intersection）运算），只支持字符串集合。 3、定时保存磁盘文件，缓存关闭时时自动存盘，初始化时可将指定文件加">
   
     <link rel="alternative" href="/atom.xml" title="Kingtu&#39;s Blogs" type="application/atom+xml">
   
@@ -144,198 +148,266 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-golang_for_redicache" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h3><p>用 Golang实现一个线程安全的类 redis的缓存，包名:redicache</p>
+<p>功能:</p>
+<p>1、键值对的存储:实现set，get，Del方法，键为字符串，值为字符串。</p>
+<p>2、集合（实现添加（Add）、删除（Remove）、检测（Has）以及两个集合之间的并集（Union）交集（ Intersection）运算），只支持字符串集合。</p>
+<p>3、定时保存磁盘文件，缓存关闭时时自动存盘，初始化时可将指定文件加载到内存。要求:</p>
+<p>注释、文档及单元测试齐全；</p>
+<h3 id="介绍几个工具"><a href="#介绍几个工具" class="headerlink" title="介绍几个工具"></a>介绍几个工具</h3><h4 id="gofmt"><a href="#gofmt" class="headerlink" title="gofmt"></a>gofmt</h4><p>gofmt 命令可以批量格式化代码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gofmt -w ./ *.go</span><br></pre></td></tr></table></figure>
+<h4 id="package-log"><a href="#package-log" class="headerlink" title="package log"></a>package log</h4><p>log包实现了简单的日志服务。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    <span class="comment">// 字位共同控制输出日志信息的细节。不能控制输出的顺序和格式。</span></span><br><span class="line">    <span class="comment">// 在所有项目后会有一个冒号：2009/01/23 01:23:23.123123 /a/b/c/d.go:23: message</span></span><br><span class="line">    Ldate         = <span class="number">1</span> &lt;&lt; <span class="literal">iota</span>     <span class="comment">// 日期：2009/01/23</span></span><br><span class="line">    Ltime                         <span class="comment">// 时间：01:23:23</span></span><br><span class="line">    Lmicroseconds                 <span class="comment">// 微秒分辨率：01:23:23.123123（用于增强Ltime位）</span></span><br><span class="line">    Llongfile                     <span class="comment">// 文件全路径名+行号： /a/b/c/d.go:23</span></span><br><span class="line">    Lshortfile                    <span class="comment">// 文件无路径名+行号：d.go:23（会覆盖掉Llongfile）</span></span><br><span class="line">    LstdFlags     = Ldate | Ltime <span class="comment">// 标准logger的初始值</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h5 id="func-SetFlags"><a href="#func-SetFlags" class="headerlink" title="func SetFlags"></a>func <a href="https://github.com/golang/go/blob/master/src/log/log.go?name=release#251" target="_blank" rel="noopener">SetFlags</a></h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">SetFlags</span><span class="params">(flag <span class="keyword">int</span>)</span></span></span><br></pre></td></tr></table></figure>
+<p>SetFlags设置标准logger的输出选项。</p>
+<h5 id="func-SetPrefix"><a href="#func-SetPrefix" class="headerlink" title="func SetPrefix"></a>func <a href="https://github.com/golang/go/blob/master/src/log/log.go?name=release#261" target="_blank" rel="noopener">SetPrefix</a></h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">SetPrefix</span><span class="params">(prefix <span class="keyword">string</span>)</span></span></span><br></pre></td></tr></table></figure>
+<p>SetPrefix设置标准logger的输出前缀。</p>
+<h5 id="func-SetOutput"><a href="#func-SetOutput" class="headerlink" title="func SetOutput"></a>func <a href="https://github.com/golang/go/blob/master/src/log/log.go?name=release#239" target="_blank" rel="noopener">SetOutput</a></h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">SetOutput</span><span class="params">(w io.Writer)</span></span></span><br></pre></td></tr></table></figure>
+<p>SetOutput设置标准logger的输出目的地，默认是标准错误输出。</p>
+<h5 id="func-Println"><a href="#func-Println" class="headerlink" title="func Println"></a>func <a href="https://github.com/golang/go/blob/master/src/log/log.go?name=release#281" target="_blank" rel="noopener">Println</a></h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">func Println(v ...interface&#123;&#125;)</span><br></pre></td></tr></table></figure>
+<p>Println调用Output将生成的格式化字符串输出到标准logger，参数用和fmt.Println相同的方法处理。</p>
+<h5 id="func-Fatalln"><a href="#func-Fatalln" class="headerlink" title="func Fatalln"></a>func <a href="https://github.com/golang/go/blob/master/src/log/log.go?name=release#298" target="_blank" rel="noopener">Fatalln</a></h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">func Fatalln(v ...interface&#123;&#125;)</span><br></pre></td></tr></table></figure>
+<p>Fatalln等价于{Println(v…); os.Exit(1)}</p>
+<p>详见： <a href="https://www.flysnow.org/2017/05/06/go-in-action-go-log.html" target="_blank" rel="noopener">Go语言实战笔记（十八）| Go log 日志</a></p>
+<h4 id="Go-Modules（包管理）"><a href="#Go-Modules（包管理）" class="headerlink" title="Go Modules（包管理）"></a>Go Modules（包管理）</h4><p>2013 年：Gedep，社区第一个包管理工具<br>2015 年：vendor ，Golang 官方 （golang1.5）<br>2016、2017 年：dep、manul、Godep、Govendor、godm （Govendor胜出）</p>
+<p>go modules随着golang1.11发布，这是官方提倡的新的包管理，乃至项目管理机制，可以不再需要GOPATH的存在。</p>
+<h5 id="GO111MODULE"><a href="#GO111MODULE" class="headerlink" title="GO111MODULE"></a>GO111MODULE</h5><p>可以用环境变量 <code>GO111MODULE</code> 开启或关闭模块支持，它有三个可选值：off、on、auto，默认值是 auto。</p>
+<ul>
+<li><code>GO111MODULE=off</code> 无模块支持，go 会从 GOPATH 和 vendor 文件夹寻找包。</li>
+<li><code>GO111MODULE=on</code> 模块支持，go 会忽略 GOPATH 和 vendor 文件夹，只根据 go.mod 下载依赖。</li>
+<li><code>GO111MODULE=auto</code> 在 $GOPATH/src 外面且根目录有 go.mod 文件时，开启模块支持。</li>
+</ul>
+<p>在使用模块的时候，GOPATH 是无意义的，不过它还是会把下载的依赖储存在 $GOPATH/pkg/mod 中，也会把 go install 的结果放在 $GOPATH/bin 中。</p>
+<h5 id="设置-GO111MODULE-和-GOPROXY"><a href="#设置-GO111MODULE-和-GOPROXY" class="headerlink" title="设置 GO111MODULE 和 GOPROXY"></a>设置 GO111MODULE 和 GOPROXY</h5><p>在 Linux 或 macOS 上面，需要运行下面命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启用 Go Modules 功能</span></span><br><span class="line"><span class="built_in">export</span> GO111MODULE=on</span><br><span class="line"><span class="comment"># 配置 GOPROXY 环境变量</span></span><br><span class="line"><span class="built_in">export</span> GOPROXY=https://goproxy.io</span><br></pre></td></tr></table></figure>
+<p>或者，可以把上面的命令写到 <code>.bashrc</code> 或 <code>.bash_profile</code> 文件当中。</p>
+<p>在 Windows 上，需要运行下面命令：</p>
+<p>运行（win+R） ===&gt; PowerShell </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启用 Go Modules 功能</span></span><br><span class="line"><span class="variable">$env</span>:GO111MODULE=<span class="string">"on"</span></span><br><span class="line"><span class="comment"># 配置 GOPROXY 环境变量</span></span><br><span class="line"><span class="variable">$env</span>:GOPROXY=<span class="string">"https://goproxy.io"</span></span><br></pre></td></tr></table></figure>
+<p>现在，当你构建或运行你的应用时，Go 将会通过 goproxy.io 获取依赖。更多信息请查看 <a href="https://github.com/goproxyio/goproxy" target="_blank" rel="noopener">goproxy 仓库</a>。</p>
+<p>如果你使用的 Go 版本&gt;=1.13, 你可以通过设置 GOPRIVATE 环境变量来控制哪些私有仓库和依赖(公司内部仓库)不通过 proxy 来拉取，直接走本地，设置如下：</p>
+<p>Go version &gt;= 1.13 复制</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">go env -w GOPROXY=https://goproxy.io,direct</span><br><span class="line"><span class="comment"># 设置不走 proxy 的私有仓库，多个用逗号相隔</span></span><br><span class="line">go env -w GOPRIVATE=*.corp.example.com</span><br></pre></td></tr></table></figure>
+<p><a href="https://goproxy.io/" target="_blank" rel="noopener">参考链接</a></p>
+<p><strong>goland中设置如下：</strong></p>
+<p>File –&gt; Settings –&gt; Go –&gt; Go Modules(vgo) –&gt; Enable Go Modules(vgo) integration（打勾） –&gt; 设置代理 Proxy: <a href="https://goproxy.io" target="_blank" rel="noopener">https://goproxy.io</a> 。</p>
+<h5 id="Go-Mod-使用"><a href="#Go-Mod-使用" class="headerlink" title="Go Mod 使用"></a>Go Mod 使用</h5><p>使用 <code>go help mod</code>查看 go mod 命令</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">download    download modules to local cache (下载依赖的module到本地cache))</span><br><span class="line">edit        edit <span class="keyword">go</span>.mod from tools or scripts (编辑<span class="keyword">go</span>.mod文件)</span><br><span class="line">graph       <span class="built_in">print</span> module requirement graph (打印模块依赖图))</span><br><span class="line">init        initialize <span class="built_in">new</span> module in current directory (再当前文件夹下初始化一个新的module, 创建<span class="keyword">go</span>.mod文件))</span><br><span class="line">tidy        add missing and remove unused modules (增加丢失的module，去掉未用的module)</span><br><span class="line">vendor      <span class="built_in">make</span> vendored <span class="built_in">copy</span> of dependencies (将依赖复制到vendor下)</span><br><span class="line">verify      verify dependencies have expected content (校验依赖)</span><br><span class="line">why         explain why packages or modules are needed (解释为什么需要依赖)</span><br></pre></td></tr></table></figure>
+<p><strong>初始化 module：go mod init [项目名]</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> mod init github.com/King-tu/redicache/rediServer</span><br></pre></td></tr></table></figure>
+<p><strong>注意：</strong> 你的包如果存放在github上 你的包的go.mod module后面一定是github.com/xxx/xxx不能直接写成 xxx 这样的话，go mod 无法获得包 错误是<code>parsing go.mod: unexpected module path &quot;test&quot; go: error loading module requirements</code></p>
+<p><strong>查看module下的所有依赖</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go list -m all</span><br></pre></td></tr></table></figure>
+<p><strong>使用replace导入本地其他项目下依赖包（直接修改go.mod文件）</strong></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">replace github.com/King-tu/zinx v1<span class="number">.0</span><span class="number">.0</span> =&gt; D:/Go_WorkSpace/<span class="number">0604</span>就业班/zinxProject</span><br></pre></td></tr></table></figure>
+<p>注意版本号必须填写，可以填<code>v0.0.0</code>或者<code>latest</code>.</p>
+<p>注意错误提示</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span>: errors parsing <span class="keyword">go</span>.mod:</span><br><span class="line"></span><br><span class="line">usage: replace module/path [v1<span class="number">.2</span><span class="number">.3</span>] =&gt; other/module v1<span class="number">.4</span> or replace module/path [v1<span class="number">.2</span><span class="number">.3</span>] =&gt; ../local/directory</span><br></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span>: errors parsing <span class="keyword">go</span>.mod:</span><br><span class="line"></span><br><span class="line">replacement module without version must be directory path (rooted or starting with ./ or ../)</span><br></pre></td></tr></table></figure>
+<p><strong>包版本管理</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">发布版本</span><br><span class="line"></span><br><span class="line">$ git tag v1.0.0</span><br><span class="line">$ git push --tags</span><br></pre></td></tr></table></figure>
+<p>详见： <a href="https://objcoding.com/2018/09/13/go-modules/" target="_blank" rel="noopener">Go Modules详解</a></p>
+<h4 id="go-doc与godoc"><a href="#go-doc与godoc" class="headerlink" title="go doc与godoc"></a>go doc与godoc</h4><p>在讲解 Go语言注释之前，大家可以先来看一下下面这段代码。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//test.go</span></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"><span class="keyword">import</span> <span class="string">"fmt"</span> <span class="comment">// 引入 fmt 包</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;   </span><br><span class="line">    fmt.Printf(<span class="string">"Καλημέρα κόσμε; or こんにちは 世界\n"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面这个例子通过打印“Καλημέρα κόσμε; or こんにちは 世界”展示了如何在 Go语言中使用国际化字符，以及如何使用注释。</p>
+<p>注释不会被编译，但可以通过 godoc 来使用。</p>
+<p>Go语言中注释一般分为两种，分别是单行注释和多行注释：</p>
+<ul>
+<li>单行注释是最常见的注释形式，可以在任何地方使用以 // 开头的单行注释。</li>
+<li>多行注释也叫块注释，均已以 /<em> 开头，并以 </em>/ 结尾，且不可以嵌套使用，多行注释一般用于包的文档描述或注释成块的代码片段。</li>
+</ul>
+<p>每一个包都应该有相关注释，上述代码中在 package 语句之前的块注释将被默认认为是这个包的文档说明，其中应该提供一些相关信息并对整体功能做简要的介绍。一个包可以分散在多个文件中，但是只需要在其中一个进行注释说明即可。</p>
+<p>当开发人员需要了解包的一些情况时，自然会用 godoc 来显示包的文档说明，在首行的简要注释之后可以用成段的注释来进行更详细的说明，而不必拥挤在一起。另外，在多段注释之间应以空行分隔加以区分。</p>
+<p>示例 1)</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Package superman implements methods for saving the world.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Experience has shown that a small number of procedures can prove</span></span><br><span class="line"><span class="comment">// helpful when attempting to save the world.</span></span><br><span class="line"><span class="keyword">package</span> superman</span><br></pre></td></tr></table></figure>
+<p>几乎所有全局作用域的类型、常量、变量、函数和被导出的对象都应该有一个合理的注释。如果这种注释（称为文档注释）出现在函数前面，例如函数 Abcd，则要以 “Abcd…” 作为开头。</p>
+<p>示例 2)</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// enterOrbit causes Superman to fly into low Earth orbit, a position</span></span><br><span class="line"><span class="comment">// that presents several possibilities for planet salvation.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">enterOrbit</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>godoc 工具会从 Go 程序和包文件中提取顶级声明的首行注释以及每个对象的相关注释，并生成相关文档。也可以作为一个提供在线文档浏览的 web 服务器，Go语言官网（<a href="https://golang.google.cn/）就是通过这种形式实的。" target="_blank" rel="noopener">https://golang.google.cn/）就是通过这种形式实的。</a></p>
+<p>godoc 工具一般有一下几种用法：</p>
+<ul>
+<li><strong>go doc package</strong>：获取包的文档注释，例如：go doc fmt 会显示使用 godoc 生成的 fmt 包的文档注释。</li>
+<li>go doc package/subpackage：获取子包的文档注释，例如：go doc container/list。</li>
+<li><strong>go doc package function</strong>：获取某个函数在某个包中的文档注释，例如：go doc fmt Printf 会显示有关 fmt.Printf() 的使用说明。</li>
+</ul>
+<p>这个工具只能获取在 Go 安装目录下 ==../go/src==  中的注释内容。此外，它还可以作为一个本地文档浏览 web 服务器。在命令行输入 ==godoc -http=:6060==，然后使用浏览器打开 <a href="http://localhost:6060" target="_blank" rel="noopener">http://localhost:6060</a> 后，就可以看到本地文档浏览服务器提供的页面。</p>
+<p><a href="http://c.biancheng.net/view/4035.html" target="_blank" rel="noopener">参考链接</a></p>
+<p>一般情况下，<code>godoc</code>命令会去Go语言根目录和环境变量GOPATH包含的工作区目录中查找代码包。我们可以通过加入标记<code>-goroot</code>来制定一个Go语言根目录。这个被指定的Go语言根目录仅被用于当次命令的执行。示例如下：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hc@ubt:~$ godoc -goroot=<span class="string">"/usr/local/go"</span> fmt</span><br></pre></td></tr></table></figure>
+<p>现在让我们来看看另外一种模式。如果我们在执行命令时加上<code>-http</code>标记则会启用另一模式。这种模式被叫做Web服务器模式，它以Web页面的形式提供Go语言文档。</p>
+<p>我们使用如下命令启动这个文档Web服务器：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hc@ubt:~/golang/goc2p$ godoc -http=:6060</span><br></pre></td></tr></table></figure>
+<p>标记<code>-http</code>的值<code>:6060</code>表示启动的Web服务器使用本机的6060端口。之后，我们就可以通过在网络浏览器的地址栏中输入<a href="http://localhost:6060/" target="_blank" rel="noopener">http://localhost:6060</a>来查看以网页方式展现的Go文档了。</p>
+<p>详见： <a href="http://wiki.jikexueyuan.com/project/go-command-tutorial/0.5.html" target="_blank" rel="noopener">go doc与godoc</a></p>
+<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><h4 id="普通键值对的存储、查询"><a href="#普通键值对的存储、查询" class="headerlink" title="普通键值对的存储、查询:"></a>普通键值对的存储、查询:</h4><h5 id="定义一个读写锁，保障线程安全"><a href="#定义一个读写锁，保障线程安全" class="headerlink" title="定义一个读写锁，保障线程安全"></a>定义一个读写锁，保障线程安全</h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> RediStrLock sync.RWMutex</span><br></pre></td></tr></table></figure>
+<h5 id="type-RediStrObj"><a href="#type-RediStrObj" class="headerlink" title="type RediStrObj"></a>type <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/redistr/redistr.go?s=211:264#L3" target="_blank" rel="noopener">RediStrObj</a></h5><p>定义一个操作 键值对存储的对象</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> RediStrObj <span class="keyword">struct</span> &#123;</span><br><span class="line">    RediStr <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="func-NewRediStrObj"><a href="#func-NewRediStrObj" class="headerlink" title="func NewRediStrObj"></a>func <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/redistr/redistr.go?s=305:337#L8" target="_blank" rel="noopener">NewRediStrObj</a></h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewRediStrObj</span><span class="params">()</span> *<span class="title">RediStrObj</span></span></span><br></pre></td></tr></table></figure>
+<p>创建操作键值对存储的对象</p>
+<h5 id="func-RediStrObj-Get"><a href="#func-RediStrObj-Get" class="headerlink" title="func (*RediStrObj) Get"></a>func (*RediStrObj) <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/redistr/redistr.go?s=1218:1266#L33" target="_blank" rel="noopener">Get</a></h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(strObj *RediStrObj)</span> <span class="title">Get</span><span class="params">(key <span class="keyword">string</span>)</span> <span class="title">string</span></span></span><br></pre></td></tr></table></figure>
+<p>返回key的value。</p>
+<h5 id="func-RediStrObj-Set"><a href="#func-RediStrObj-Set" class="headerlink" title="func (*RediStrObj) Set"></a>func (*RediStrObj) <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/redistr/redistr.go?s=817:872#L20" target="_blank" rel="noopener">Set</a></h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(strObj *RediStrObj)</span> <span class="title">Set</span><span class="params">(key, value <span class="keyword">string</span>)</span> <span class="title">string</span></span></span><br></pre></td></tr></table></figure>
+<p>将键key设定为指定的“字符串”值。</p>
+<h4 id="集合-set-的CRUD和交集、并集运算"><a href="#集合-set-的CRUD和交集、并集运算" class="headerlink" title="集合(set)的CRUD和交集、并集运算"></a>集合(set)的CRUD和交集、并集运算</h4><h5 id="定义读写锁"><a href="#定义读写锁" class="headerlink" title="定义读写锁"></a>定义读写锁</h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> RediSetLock sync.RWMutex</span><br></pre></td></tr></table></figure>
+<h5 id="func-PrintSet"><a href="#func-PrintSet" class="headerlink" title="func PrintSet"></a>func <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/rediset/rediset.go?s=4189:4244#L156" target="_blank" rel="noopener">PrintSet</a></h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">PrintSet</span><span class="params">(set <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">struct</span>&#123;&#125;)</span> <span class="params">(members <span class="keyword">string</span>)</span></span></span><br></pre></td></tr></table></figure>
+<p>打印集合元素</p>
+<h5 id="type-RediSetObj"><a href="#type-RediSetObj" class="headerlink" title="type RediSetObj"></a>type <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/rediset/rediset.go?s=168:234#L3" target="_blank" rel="noopener">RediSetObj</a></h5><p>定义集合的操作对象</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> RediSetObj <span class="keyword">struct</span> &#123;</span><br><span class="line">    RediSet <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">struct</span>&#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="func-NewRediSetObj"><a href="#func-NewRediSetObj" class="headerlink" title="func NewRediSetObj"></a>func <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/rediset/rediset.go?s=266:298#L8" target="_blank" rel="noopener">NewRediSetObj</a></h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewRediSetObj</span><span class="params">()</span> *<span class="title">RediSetObj</span></span></span><br></pre></td></tr></table></figure>
+<p>创建集合的操作对象</p>
+<h5 id="func-RediSetObj-Sadd"><a href="#func-RediSetObj-Sadd" class="headerlink" title="func (*RediSetObj) Sadd"></a>func (*RediSetObj) <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/rediset/rediset.go?s=789:855#L20" target="_blank" rel="noopener">Sadd</a></h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rsObj *RediSetObj)</span> <span class="title">Sadd</span><span class="params">(key <span class="keyword">string</span>, members []<span class="keyword">string</span>)</span> <span class="title">string</span></span></span><br></pre></td></tr></table></figure>
+<p>添加一个或多个指定的member元素到集合的 key中.</p>
+<h5 id="func-RediSetObj-Sinter"><a href="#func-RediSetObj-Sinter" class="headerlink" title="func (*RediSetObj) Sinter"></a>func (*RediSetObj) <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/rediset/rediset.go?s=2921:2984#L99" target="_blank" rel="noopener">Sinter</a></h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rsObj *RediSetObj)</span> <span class="title">Sinter</span><span class="params">(keys []<span class="keyword">string</span>)</span> <span class="params">(members <span class="keyword">string</span>)</span></span></span><br></pre></td></tr></table></figure>
+<p>返回指定所有的集合的成员的交集.</p>
+<h5 id="func-RediSetObj-Sismember"><a href="#func-RediSetObj-Sismember" class="headerlink" title="func (*RediSetObj) Sismember"></a>func (*RediSetObj) <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/rediset/rediset.go?s=2395:2456#L79" target="_blank" rel="noopener">Sismember</a></h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rsObj *RediSetObj)</span> <span class="title">Sismember</span><span class="params">(key, member <span class="keyword">string</span>)</span> <span class="title">string</span></span></span><br></pre></td></tr></table></figure>
+<p>返回成员 member 是否是存储的集合 key的成员.</p>
+<h5 id="func-RediSetObj-Smembers"><a href="#func-RediSetObj-Smembers" class="headerlink" title="func (*RediSetObj) Smembers"></a>func (*RediSetObj) <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/rediset/rediset.go?s=1998:2060#L65" target="_blank" rel="noopener">Smembers</a></h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rsObj *RediSetObj)</span> <span class="title">Smembers</span><span class="params">(key <span class="keyword">string</span>)</span> <span class="params">(members <span class="keyword">string</span>)</span></span></span><br></pre></td></tr></table></figure>
+<p>返回key集合所有的元素.</p>
+<h5 id="func-RediSetObj-Srem"><a href="#func-RediSetObj-Srem" class="headerlink" title="func (*RediSetObj) Srem"></a>func (*RediSetObj) <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/rediset/rediset.go?s=1536:1602#L45" target="_blank" rel="noopener">Srem</a></h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rsObj *RediSetObj)</span> <span class="title">Srem</span><span class="params">(key <span class="keyword">string</span>, members []<span class="keyword">string</span>)</span> <span class="title">string</span></span></span><br></pre></td></tr></table></figure>
+<p>在key集合中移除指定的元素.</p>
+<h5 id="func-RediSetObj-Sunion"><a href="#func-RediSetObj-Sunion" class="headerlink" title="func (*RediSetObj) Sunion"></a>func (*RediSetObj) <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/rediset/rediset.go?s=3834:3897#L139" target="_blank" rel="noopener">Sunion</a></h5><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(rsObj *RediSetObj)</span> <span class="title">Sunion</span><span class="params">(keys []<span class="keyword">string</span>)</span> <span class="params">(members <span class="keyword">string</span>)</span></span></span><br></pre></td></tr></table></figure>
+<p>返回给定的多个集合的并集中的所有成员</p>
+<h4 id="缓存数据持久化"><a href="#缓存数据持久化" class="headerlink" title="缓存数据持久化"></a>缓存数据持久化</h4><h5 id="type-RediCache"><a href="#type-RediCache" class="headerlink" title="type RediCache"></a>type <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/redipersist/redipersist.go?s=355:444#L9" target="_blank" rel="noopener">RediCache</a></h5><p>定义RediCache对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">type RediCache struct &#123;</span><br><span class="line">    RediStrObj *redistr.RediStrObj</span><br><span class="line">    RediSetObj *rediset.RediSetObj</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="func-NewRediCache"><a href="#func-NewRediCache" class="headerlink" title="func NewRediCache"></a>func <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/redipersist/redipersist.go?s=476:506#L15" target="_blank" rel="noopener">NewRediCache</a></h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">func NewRediCache() *RediCache</span><br></pre></td></tr></table></figure>
+<p>创建一个RediCache对象</p>
+<h5 id="func-RediCache-Del"><a href="#func-RediCache-Del" class="headerlink" title="func (*RediCache) Del"></a>func (*RediCache) <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/redipersist/redipersist.go?s=1455:1501#L58" target="_blank" rel="noopener">Del</a></h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">func (rc *RediCache) Del(keys []string) string</span><br></pre></td></tr></table></figure>
+<p>删除指定的一批keys，如果删除中的某些key不存在，则直接忽略。</p>
+<p>返回值 integer-reply： 被删除的keys的数量</p>
+<h5 id="func-RediCache-GetKeys"><a href="#func-RediCache-GetKeys" class="headerlink" title="func (*RediCache) GetKeys"></a>func (*RediCache) <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/redipersist/redipersist.go?s=714:772#L25" target="_blank" rel="noopener">GetKeys</a></h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">func (rc *RediCache) GetKeys(pattern string) (keys string)</span><br></pre></td></tr></table></figure>
+<p>查找所有符合给定模式pattern（正则表达式）的 key 。</p>
+<h5 id="func-RediCache-LoadFromFile"><a href="#func-RediCache-LoadFromFile" class="headerlink" title="func (*RediCache) LoadFromFile"></a>func (*RediCache) <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/redipersist/redipersist.go?s=2567:2602#L110" target="_blank" rel="noopener">LoadFromFile</a></h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">func (rc *RediCache) LoadFromFile()</span><br></pre></td></tr></table></figure>
+<p>从磁盘文件加载数据</p>
+<p>func (*RediCache) <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/redipersist/redipersist.go?s=2099:2139#L89" target="_blank" rel="noopener">SaveToFile</a></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">func (rc *RediCache) SaveToFile() string</span><br></pre></td></tr></table></figure>
+<p>保存缓存数据至磁盘文件</p>
+<h5 id="func-IsFileNotExist"><a href="#func-IsFileNotExist" class="headerlink" title="func IsFileNotExist"></a>func <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/redipersist/redipersist.go?s=3100:3141#L132" target="_blank" rel="noopener">IsFileNotExist</a></h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">func IsFileNotExist(fileName string) bool</span><br></pre></td></tr></table></figure>
+<p>判断文件是否存在</p>
+<h4 id="RediServer实现"><a href="#RediServer实现" class="headerlink" title="RediServer实现"></a>RediServer实现</h4><h5 id="type-Server"><a href="#type-Server" class="headerlink" title="type Server"></a>type <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/server/server.go?s=273:322#L5" target="_blank" rel="noopener">Server</a></h5><p>定义服务器操作对象</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">type Server struct &#123;</span><br><span class="line">    RC *redipersist.RediCache</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="func-NewServer"><a href="#func-NewServer" class="headerlink" title="func NewServer"></a>func <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/server/server.go?s=354:378#L10" target="_blank" rel="noopener">NewServer</a></h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">func NewServer() *Server</span><br></pre></td></tr></table></figure>
+<p>创建服务器操作对象</p>
+<h5 id="func-Server-Handle"><a href="#func-Server-Handle" class="headerlink" title="func (*Server) Handle"></a>func (*Server) <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/server/server.go?s=1504:1550#L67" target="_blank" rel="noopener">Handle</a></h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">func (s *Server) Handle(cliData string) string</span><br></pre></td></tr></table></figure>
+<p>处理客户端命令</p>
+<h5 id="func-Server-Server"><a href="#func-Server-Server" class="headerlink" title="func (*Server) Server"></a>func (*Server) <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/server/server.go?s=480:505#L17" target="_blank" rel="noopener">Server</a></h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">func (s *Server) Server()</span><br></pre></td></tr></table></figure>
+<p>启动服务器，监听客户端连接</p>
+<h5 id="func-Server-TimeToSave"><a href="#func-Server-TimeToSave" class="headerlink" title="func (*Server) TimeToSave"></a>func (*Server) <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediServer/server/server.go?s=3002:3031#L149" target="_blank" rel="noopener">TimeToSave</a></h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">func (s *Server) TimeToSave()</span><br></pre></td></tr></table></figure>
+<p>定时保存缓存数据</p>
+<h4 id="RediClient实现"><a href="#RediClient实现" class="headerlink" title="RediClient实现"></a>RediClient实现</h4><h5 id="func-RediGo"><a href="#func-RediGo" class="headerlink" title="func RediGo"></a>func <a href="http://localhost:6060/src/github.com/King-tu/redicache/rediClient/redicli/redicli.go?s=458:471#L22" target="_blank" rel="noopener">RediGo</a></h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">func RediGo()</span><br></pre></td></tr></table></figure>
+<p>连接服务器，读取键盘输入</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
       
       
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2019" class="archive-year">2019</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/09/13/golang_for_redicache/" class="archive-article-date">
-  	<time datetime="2019-09-13T12:17:47.584Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-09-13</time>
-</a>
-        </div>
-    	 
-        <div class="article-info info-on-right">
-          
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="https://img.fanhaobai.com/qrcode.php?url=https://king-tu.github.io/2019/09/13/golang_for_redicache/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/05/28/sort_func/" class="archive-article-date">
-  	<time datetime="2019-05-27T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-28</time>
-</a>
+<nav id="article-nav">
+  
+  
+    <a href="/2019/05/28/sort_func/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">GO语言实现冒泡排序和选择排序</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/05/28/sort_func/">GO语言实现冒泡排序和选择排序</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">冒泡排序</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">选择排序</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Golang//" class="article-tag-list-link color2">Golang</a>
-        		</li>
-      		
-		</ul>
-	</div>
+        
+        
+    </div>
+</aside>
 
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/05/14/Mysql_Mater_Slave/" class="archive-article-date">
-  	<time datetime="2019-05-13T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-05-14</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/05/14/Mysql_Mater_Slave/">Mysql主从配置（主Linux--从Windows）</a>
-    </h1>
-  
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">主从配置</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Mysql//" class="article-tag-list-link color1">Mysql</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2019/04/26/hexo-git-github_page/" class="archive-article-date">
-  	<time datetime="2019-04-25T16:00:00.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2019-04-26</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2019/04/26/hexo-git-github_page/">Hexo+Git搭建Github Page</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">Hexo</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Github</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Blog//" class="article-tag-list-link color5">Blog</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
   
-    </div></section>
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -358,8 +430,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: false,
