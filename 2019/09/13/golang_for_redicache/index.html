@@ -8,17 +8,17 @@
   <link rel="dns-prefetch" href="https://king-tu.github.io">
   <title>Kingtu&#39;s Blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="需求用 Golang实现一个线程安全的类 redis的缓存，包名:redicache 功能: 1、键值对的存储:实现set，get，Del方法，键为字符串，值为字符串。 2、集合（实现添加（Add）、删除（Remove）、检测（Has）以及两个集合之间的并集（Union）交集（ Intersection）运算），只支持字符串集合。 3、定时保存磁盘文件，缓存关闭时时自动存盘，初始化时可将指定文件加">
+  <meta name="description" content="用 Golang实现一个线程安全的类 redis的缓存，包名:redicache功能: 1、键值对的存储:实现set，get，Del方法，键为字符串，值为字符串。 2、集合（实现添加（Add）、删除（Remove）、检测（Has）以及两个集合之间的并集（Union）交集（ Intersection）运算），只支持字符串集合。 3、定时保存磁盘文件，缓存关闭时时自动存盘，初始化时可将指定文件加载到内">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Kingtu&#39;s Blogs">
 <meta property="og:url" content="https://king-tu.github.io/2019/09/13/golang_for_redicache/index.html">
 <meta property="og:site_name" content="Kingtu&#39;s Blogs">
-<meta property="og:description" content="需求用 Golang实现一个线程安全的类 redis的缓存，包名:redicache 功能: 1、键值对的存储:实现set，get，Del方法，键为字符串，值为字符串。 2、集合（实现添加（Add）、删除（Remove）、检测（Has）以及两个集合之间的并集（Union）交集（ Intersection）运算），只支持字符串集合。 3、定时保存磁盘文件，缓存关闭时时自动存盘，初始化时可将指定文件加">
+<meta property="og:description" content="用 Golang实现一个线程安全的类 redis的缓存，包名:redicache功能: 1、键值对的存储:实现set，get，Del方法，键为字符串，值为字符串。 2、集合（实现添加（Add）、删除（Remove）、检测（Has）以及两个集合之间的并集（Union）交集（ Intersection）运算），只支持字符串集合。 3、定时保存磁盘文件，缓存关闭时时自动存盘，初始化时可将指定文件加载到内">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-09-13T12:22:33.431Z">
+<meta property="og:updated_time" content="2019-09-13T13:05:31.133Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Kingtu&#39;s Blogs">
-<meta name="twitter:description" content="需求用 Golang实现一个线程安全的类 redis的缓存，包名:redicache 功能: 1、键值对的存储:实现set，get，Del方法，键为字符串，值为字符串。 2、集合（实现添加（Add）、删除（Remove）、检测（Has）以及两个集合之间的并集（Union）交集（ Intersection）运算），只支持字符串集合。 3、定时保存磁盘文件，缓存关闭时时自动存盘，初始化时可将指定文件加">
+<meta name="twitter:description" content="用 Golang实现一个线程安全的类 redis的缓存，包名:redicache功能: 1、键值对的存储:实现set，get，Del方法，键为字符串，值为字符串。 2、集合（实现添加（Add）、删除（Remove）、检测（Has）以及两个集合之间的并集（Union）交集（ Intersection）运算），只支持字符串集合。 3、定时保存磁盘文件，缓存关闭时时自动存盘，初始化时可将指定文件加载到内">
   
     <link rel="alternative" href="/atom.xml" title="Kingtu&#39;s Blogs" type="application/atom+xml">
   
@@ -153,8 +153,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h3><p>用 Golang实现一个线程安全的类 redis的缓存，包名:redicache</p>
-<p>功能:</p>
+        <h2 id="用-Golang实现一个线程安全的类-redis的缓存，包名-redicache"><a href="#用-Golang实现一个线程安全的类-redis的缓存，包名-redicache" class="headerlink" title="用 Golang实现一个线程安全的类 redis的缓存，包名:redicache"></a>用 Golang实现一个线程安全的类 redis的缓存，包名:redicache</h2><p>功能:</p>
 <p>1、键值对的存储:实现set，get，Del方法，键为字符串，值为字符串。</p>
 <p>2、集合（实现添加（Add）、删除（Remove）、检测（Has）以及两个集合之间的并集（Union）交集（ Intersection）运算），只支持字符串集合。</p>
 <p>3、定时保存磁盘文件，缓存关闭时时自动存盘，初始化时可将指定文件加载到内存。要求:</p>
@@ -176,6 +175,7 @@
 <p>详见： <a href="https://www.flysnow.org/2017/05/06/go-in-action-go-log.html" target="_blank" rel="noopener">Go语言实战笔记（十八）| Go log 日志</a></p>
 <h4 id="Go-Modules（包管理）"><a href="#Go-Modules（包管理）" class="headerlink" title="Go Modules（包管理）"></a>Go Modules（包管理）</h4><p>2013 年：Gedep，社区第一个包管理工具<br>2015 年：vendor ，Golang 官方 （golang1.5）<br>2016、2017 年：dep、manul、Godep、Govendor、godm （Govendor胜出）</p>
 <p>go modules随着golang1.11发布，这是官方提倡的新的包管理，乃至项目管理机制，可以不再需要GOPATH的存在。</p>
+<a id="more"></a>
 <h5 id="GO111MODULE"><a href="#GO111MODULE" class="headerlink" title="GO111MODULE"></a>GO111MODULE</h5><p>可以用环境变量 <code>GO111MODULE</code> 开启或关闭模块支持，它有三个可选值：off、on、auto，默认值是 auto。</p>
 <ul>
 <li><code>GO111MODULE=off</code> 无模块支持，go 会从 GOPATH 和 vendor 文件夹寻找包。</li>
