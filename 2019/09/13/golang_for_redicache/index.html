@@ -6,20 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link rel="dns-prefetch" href="https://king-tu.github.io">
-  <title>用 Golang实现一个线程安全的类 redis的缓存，包名:redicache | Kingtu&#39;s Blogs</title>
+  <title>用 Golang实现一个线程安全的类 redis的缓存 Redicache | Kingtu&#39;s Blogs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="功能: 1、键值对的存储:实现set，get，Del方法，键为字符串，值为字符串。 2、集合（实现添加（Add）、删除（Remove）、检测（Has）以及两个集合之间的并集（Union）交集（ Intersection）运算），只支持字符串集合。 3、定时保存磁盘文件，缓存关闭时时自动存盘，初始化时可将指定文件加载到内存。要求: 注释、文档及单元测试齐全； 介绍几个工具gofmtgofmt 命令可">
+  <meta name="description" content="功能: 1、键值对的存储：实现set，get，Del方法，键为字符串，值为字符串。 2、集合（实现添加（Add）、删除（Remove）、检测（Has）以及两个集合之间的并集（Union）交集（ Intersection）运算），只支持字符串集合。 3、定时保存磁盘文件，缓存关闭时时自动存盘，初始化时可将指定文件加载到内存。 要求: 注释、文档及单元测试齐全； 项目中用到的几个工具gofmtgofm">
 <meta name="keywords" content="golang,redicache">
 <meta property="og:type" content="article">
-<meta property="og:title" content="用 Golang实现一个线程安全的类 redis的缓存，包名:redicache">
+<meta property="og:title" content="用 Golang实现一个线程安全的类 redis的缓存 Redicache">
 <meta property="og:url" content="https://king-tu.github.io/2019/09/13/golang_for_redicache/index.html">
 <meta property="og:site_name" content="Kingtu&#39;s Blogs">
-<meta property="og:description" content="功能: 1、键值对的存储:实现set，get，Del方法，键为字符串，值为字符串。 2、集合（实现添加（Add）、删除（Remove）、检测（Has）以及两个集合之间的并集（Union）交集（ Intersection）运算），只支持字符串集合。 3、定时保存磁盘文件，缓存关闭时时自动存盘，初始化时可将指定文件加载到内存。要求: 注释、文档及单元测试齐全； 介绍几个工具gofmtgofmt 命令可">
+<meta property="og:description" content="功能: 1、键值对的存储：实现set，get，Del方法，键为字符串，值为字符串。 2、集合（实现添加（Add）、删除（Remove）、检测（Has）以及两个集合之间的并集（Union）交集（ Intersection）运算），只支持字符串集合。 3、定时保存磁盘文件，缓存关闭时时自动存盘，初始化时可将指定文件加载到内存。 要求: 注释、文档及单元测试齐全； 项目中用到的几个工具gofmtgofm">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-09-13T13:17:11.139Z">
+<meta property="og:updated_time" content="2019-09-23T07:28:45.936Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="用 Golang实现一个线程安全的类 redis的缓存，包名:redicache">
-<meta name="twitter:description" content="功能: 1、键值对的存储:实现set，get，Del方法，键为字符串，值为字符串。 2、集合（实现添加（Add）、删除（Remove）、检测（Has）以及两个集合之间的并集（Union）交集（ Intersection）运算），只支持字符串集合。 3、定时保存磁盘文件，缓存关闭时时自动存盘，初始化时可将指定文件加载到内存。要求: 注释、文档及单元测试齐全； 介绍几个工具gofmtgofmt 命令可">
+<meta name="twitter:title" content="用 Golang实现一个线程安全的类 redis的缓存 Redicache">
+<meta name="twitter:description" content="功能: 1、键值对的存储：实现set，get，Del方法，键为字符串，值为字符串。 2、集合（实现添加（Add）、删除（Remove）、检测（Has）以及两个集合之间的并集（Union）交集（ Intersection）运算），只支持字符串集合。 3、定时保存磁盘文件，缓存关闭时时自动存盘，初始化时可将指定文件加载到内存。 要求: 注释、文档及单元测试齐全； 项目中用到的几个工具gofmtgofm">
   
     <link rel="alternative" href="/atom.xml" title="Kingtu&#39;s Blogs" type="application/atom+xml">
   
@@ -156,7 +156,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      用 Golang实现一个线程安全的类 redis的缓存，包名:redicache
+      用 Golang实现一个线程安全的类 redis的缓存 Redicache
     </h1>
   
 
@@ -170,11 +170,12 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>功能:</p>
-<p>1、键值对的存储:实现set，get，Del方法，键为字符串，值为字符串。</p>
+<p>1、键值对的存储：实现set，get，Del方法，键为字符串，值为字符串。</p>
 <p>2、集合（实现添加（Add）、删除（Remove）、检测（Has）以及两个集合之间的并集（Union）交集（ Intersection）运算），只支持字符串集合。</p>
-<p>3、定时保存磁盘文件，缓存关闭时时自动存盘，初始化时可将指定文件加载到内存。要求:</p>
+<p>3、定时保存磁盘文件，缓存关闭时时自动存盘，初始化时可将指定文件加载到内存。</p>
+<p>要求:</p>
 <p>注释、文档及单元测试齐全；</p>
-<h3 id="介绍几个工具"><a href="#介绍几个工具" class="headerlink" title="介绍几个工具"></a>介绍几个工具</h3><h4 id="gofmt"><a href="#gofmt" class="headerlink" title="gofmt"></a>gofmt</h4><p>gofmt 命令可以批量格式化代码</p>
+<h3 id="项目中用到的几个工具"><a href="#项目中用到的几个工具" class="headerlink" title="项目中用到的几个工具"></a>项目中用到的几个工具</h3><h4 id="gofmt"><a href="#gofmt" class="headerlink" title="gofmt"></a>gofmt</h4><p>gofmt 格式化代码</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ gofmt -w ./ *.go</span><br></pre></td></tr></table></figure>
 <h4 id="package-log"><a href="#package-log" class="headerlink" title="package log"></a>package log</h4><p>log包实现了简单的日志服务。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> (</span><br><span class="line">    <span class="comment">// 字位共同控制输出日志信息的细节。不能控制输出的顺序和格式。</span></span><br><span class="line">    <span class="comment">// 在所有项目后会有一个冒号：2009/01/23 01:23:23.123123 /a/b/c/d.go:23: message</span></span><br><span class="line">    Ldate         = <span class="number">1</span> &lt;&lt; <span class="literal">iota</span>     <span class="comment">// 日期：2009/01/23</span></span><br><span class="line">    Ltime                         <span class="comment">// 时间：01:23:23</span></span><br><span class="line">    Lmicroseconds                 <span class="comment">// 微秒分辨率：01:23:23.123123（用于增强Ltime位）</span></span><br><span class="line">    Llongfile                     <span class="comment">// 文件全路径名+行号： /a/b/c/d.go:23</span></span><br><span class="line">    Lshortfile                    <span class="comment">// 文件无路径名+行号：d.go:23（会覆盖掉Llongfile）</span></span><br><span class="line">    LstdFlags     = Ldate | Ltime <span class="comment">// 标准logger的初始值</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
